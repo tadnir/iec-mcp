@@ -1,0 +1,31 @@
+{
+  "name": "iec-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Read your own Israel Electric Corporation (IEC) account from an AI assistant over MCP: bills, invoice PDFs, meter readings and smart-meter consumption.",
+  "keywords": ["iec", "israel-electric", "mcp", "mcp-server", "model-context-protocol", "electricity", "smart-meter"],
+  "license": "MIT",
+  "author": "Michael Tadnir (https://github.com/tadnir)",
+  "homepage": "https://github.com/tadnir/iec-mcp#readme",
+  "bugs": { "url": "https://github.com/tadnir/iec-mcp/issues" },
+  "repository": { "type": "git", "url": "git+https://github.com/tadnir/iec-mcp.git" },
+  "engines": { "node": ">=20.0.0" },
+  "type": "module",
+  "bin": { "iec-mcp": "src/main.ts" },
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}
