@@ -76,7 +76,15 @@ describe("sign-in page", () => {
 
     expect((await http(port, "POST", "/code", `csrf=${csrf}&code=123456`)).status).toBe(303);
     expect(session.keeper.status().state).toBe("signed_in");
-    expect((await http(port, "GET", "/")).text).toContain("Signed in to IEC");
+    const status = (await http(port, "GET", "/")).text;
+    expect(status).toContain("Signed in to IEC");
+    expect(status).toContain("not needed yet");
+
+    // Signing in again, for a new length, keeps the session until it succeeds.
+    expect(status).toContain("Sign in again");
+    expect((await http(port, "POST", "/start", `csrf=${csrf}&id=18&length=30d`)).status).toBe(303);
+    expect(session.keeper.status().state).toBe("signed_in");
+    expect((await http(port, "GET", "/")).text).toContain("by SMS");
   });
 
   test("other hosts and forms without the token are refused", async () => {

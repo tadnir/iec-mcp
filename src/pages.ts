@@ -57,6 +57,16 @@ export const SESSION_LENGTHS: Record<string, [string, number]> = {
 };
 export const DEFAULT_SESSION_LENGTH = "1w";
 
+function idForm(csrf: string, label: string, secondary: boolean): string {
+  const options = Object.entries(SESSION_LENGTHS)
+    .map(([value, [text]]) => `<option value="${value}"${value === DEFAULT_SESSION_LENGTH ? " selected" : ""}>${text}</option>`)
+    .join("");
+  return `<form method="post" action="start"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
+<label>ID number (תעודת זהות)<input type="text" name="id" inputmode="numeric" autocomplete="off" pattern="[0-9]{1,9}" required/></label>
+<label>Stay signed in for<select name="length">${options}</select></label>
+<button type="submit"${secondary ? ' class="secondary"' : ""}>${escapeHtml(label)}</button></form>`;
+}
+
 export function idPage(status: KeeperStatus, csrf: string, error?: string): string {
   let why = "Nobody is signed in to IEC yet.";
   if (status.state === "expired") {
@@ -65,18 +75,12 @@ export function idPage(status: KeeperStatus, csrf: string, error?: string): stri
         ? `The session length you chose ran out at ${when(status.endedAt)}.`
         : `IEC ended the session at ${when(status.endedAt)}.`;
   }
-  const options = Object.entries(SESSION_LENGTHS)
-    .map(([value, [text]]) => `<option value="${value}"${value === DEFAULT_SESSION_LENGTH ? " selected" : ""}>${text}</option>`)
-    .join("");
   return layout(
     "Sign in to IEC",
     `<h1>Sign in to IEC</h1>
 <p>${escapeHtml(why)} IEC sends a one-time code to the phone or email on your account.</p>
 ${errorLine(error)}
-<form method="post" action="start"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
-<label>ID number (תעודת זהות)<input type="text" name="id" inputmode="numeric" autocomplete="off" pattern="[0-9]{1,9}" required/></label>
-<label>Stay signed in for<select name="length">${options}</select></label>
-<button type="submit">Send code</button></form>
+${idForm(csrf, "Send code", false)}
 <p class="note">Your ID and the code go only to IEC. This page keeps the resulting session on this machine.</p>`,
   );
 }
@@ -103,9 +107,11 @@ export function statusPage(status: KeeperStatus, csrf: string): string {
 <dl>
 <dt>Signed in</dt><dd>${escapeHtml(when(status.signedInAt))}</dd>
 <dt>Ends</dt><dd>${escapeHtml(status.endsAt ? when(status.endsAt) : "when IEC ends it")}</dd>
-<dt>Last refreshed</dt><dd>${escapeHtml(when(status.lastRefreshAt))}</dd>
+<dt>Last refreshed</dt><dd>${escapeHtml(status.lastRefreshAt ? when(status.lastRefreshAt) : "not needed yet")}</dd>
 </dl>
 ${status.lastError ? `<p class="err">Last refresh error: ${escapeHtml(status.lastError)}</p>` : ""}
+<p class="note">To change how long the session lasts, sign in again. The current session stays until the new one succeeds.</p>
+${idForm(csrf, "Sign in again", true)}
 <form method="post" action="sign-out"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/><button type="submit" class="secondary">Sign out</button></form>`,
   );
 }
