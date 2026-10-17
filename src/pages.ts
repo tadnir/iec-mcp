@@ -73,7 +73,7 @@ export function idPage(status: KeeperStatus, csrf: string, error?: string): stri
     `<h1>Sign in to IEC</h1>
 <p>${escapeHtml(why)} IEC sends a one-time code to the phone or email on your account.</p>
 ${errorLine(error)}
-<form method="post" action="/start"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
+<form method="post" action="start"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
 <label>ID number (תעודת זהות)<input type="text" name="id" inputmode="numeric" autocomplete="off" pattern="[0-9]{1,9}" required/></label>
 <label>Stay signed in for<select name="length">${options}</select></label>
 <button type="submit">Send code</button></form>
@@ -88,10 +88,10 @@ export function codePage(channel: string, csrf: string, error?: string): string 
     `<h1>Enter the code</h1>
 <p>IEC sent a one-time code ${escapeHtml(where)}.</p>
 ${errorLine(error)}
-<form method="post" action="/code"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
+<form method="post" action="code"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/>
 <label>Code<input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4,8}" required/></label>
 <button type="submit">Sign in</button></form>
-<form method="post" action="/cancel"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/><button type="submit" class="secondary">Start over</button></form>`,
+<form method="post" action="cancel"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/><button type="submit" class="secondary">Start over</button></form>`,
   );
 }
 
@@ -106,7 +106,7 @@ export function statusPage(status: KeeperStatus, csrf: string): string {
 <dt>Last refreshed</dt><dd>${escapeHtml(when(status.lastRefreshAt))}</dd>
 </dl>
 ${status.lastError ? `<p class="err">Last refresh error: ${escapeHtml(status.lastError)}</p>` : ""}
-<form method="post" action="/sign-out"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/><button type="submit" class="secondary">Sign out</button></form>`,
+<form method="post" action="sign-out"><input type="hidden" name="csrf" value="${escapeHtml(csrf)}"/><button type="submit" class="secondary">Sign out</button></form>`,
   );
 }
 
