@@ -77,7 +77,9 @@ IEC's sign-in gives a refresh token, so the session doesn't depend on activity: 
 
 ## Hosting one long-lived copy
 
-To share one session between several clients, run a single copy on an always-on machine and put a stdio-to-HTTP MCP proxy in front of it, such as [TBXark/mcp-proxy](https://github.com/TBXark/mcp-proxy), with a bearer token per client. Keep it on your own network or a private VPN, never on the internet. Put the sign-in page behind your own authentication, served at the root of its own host name, and set `IEC_LOGIN_URL` to that address (and `IEC_LOGIN_HOST=0.0.0.0` inside a container).
+To share one session between several clients, run a single copy on an always-on machine and put a stdio-to-HTTP MCP proxy in front of it, such as [TBXark/mcp-proxy](https://github.com/TBXark/mcp-proxy), with a bearer token per client. Keep it on your own network or a private VPN, never on the internet. Put the sign-in page behind your own authentication, either at the root of a host name or under a path your reverse proxy strips (for example `https://mcp.example.com/iec/` to `/`; the page links and posts only to relative paths), and set `IEC_LOGIN_URL` to that address, ending in `/` (and `IEC_LOGIN_HOST=0.0.0.0` inside a container).
+
+The `Dockerfile` builds an image of the stdio server, published as `ghcr.io/tadnir/iec-mcp` from master. Run it with `docker run -i`, or start it from your MCP proxy.
 
 Every token holder reads the account that signed in on the page; the proxy's tokens and the IEC session are unrelated. For a second person, run a second copy with its own `IEC_CONFIG_DIR`, tokens and sign-in page.
 
