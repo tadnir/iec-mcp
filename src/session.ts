@@ -223,7 +223,7 @@ export class SessionManager {
         return;
       }
     }
-    res.writeHead(303, { location: "/", "cache-control": "no-store" }).end();
+    res.writeHead(303, { location: "./", "cache-control": "no-store" }).end();
   }
 }
 

@@ -77,9 +77,11 @@ IEC's sign-in gives a refresh token, so the session doesn't depend on activity: 
 
 ## Hosting one long-lived copy
 
-To share one session between several clients, run a single copy on an always-on machine and put a stdio-to-HTTP MCP proxy in front of it, such as [TBXark/mcp-proxy](https://github.com/TBXark/mcp-proxy), with a bearer token per client. Keep it on your own network or a private VPN, never on the internet. Put the sign-in page behind your own authentication, served at the root of its own host name, and set `IEC_LOGIN_URL` to that address (and `IEC_LOGIN_HOST=0.0.0.0` inside a container).
+To share one session between several clients, run a single copy on an always-on machine and put a stdio-to-HTTP MCP proxy in front of it, such as [TBXark/mcp-proxy](https://github.com/TBXark/mcp-proxy), with a bearer token per client. Keep it on your own network or a private VPN, never on the internet. Put the sign-in page behind your own authentication and set `IEC_LOGIN_URL` to its address (and `IEC_LOGIN_HOST=0.0.0.0` inside a container). Its links and forms are relative, so it can sit at the root of a host or under a path whose prefix the reverse proxy strips (`IEC_LOGIN_URL=https://mcp.example.com/iec/login/`, with the trailing slash).
 
 Every token holder reads the account that signed in on the page; the proxy's tokens and the IEC session are unrelated. For a second person, run a second copy with its own `IEC_CONFIG_DIR`, tokens and sign-in page.
+
+The `Dockerfile` builds an image of the stdio server, published as `ghcr.io/tadnir/iec-mcp` from master, with the session in `/data` and the page on port 8766. Run it with `docker run -i`, or use it as a base for an image that adds your MCP proxy.
 
 The sign-in page answers only to `localhost`, `127.0.0.1` and the host in `IEC_LOGIN_URL`, and each form carries a per-process token. Anyone who can open the page can sign in or out, so keep it on loopback or behind your own authentication.
 
